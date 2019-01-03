@@ -1,0 +1,13 @@
+ul {
+  list-style-type: none;
+  display: inline-block;
+}
+
+.redbox {
+  border: 1px solid red;
+  padding: 10px 40px;
+}
+.greenbox {
+  border: 1px solid green;
+  padding: 5px 20px;
+}

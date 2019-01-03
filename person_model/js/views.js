@@ -5,13 +5,18 @@ var PersonModel = Backbone.Model.extend({
 });
 
 var badGuy = new PersonModel({name: "Oddjob"});
-console.log(badGuy);
-
 var goodGuy = new PersonModel({name: "Jellycat"});
-console.log(goodGuy.attributes.name);
-console.log(goodGuy.toJSON().name);
-var greetingTemplate = _.template("<h1>Hey there, <%= name %>!</h1>");
-console.log(greetingTemplate(goodGuy.toJSON()));
-$(document).ready(function(){
-  $('#person').append(greetingTemplate(badGuy.toJSON()));
+
+
+var PersonView = Backbone.View.extend({
+  tagName: 'li',
+  template: _.template($('#greetingTemplate').html()),
+  initialize: function(){
+    this.render();
+  },
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON()));
+    $('body').append(this.$el);
+    return this;
+  }
 });
