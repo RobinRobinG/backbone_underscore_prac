@@ -7,10 +7,10 @@ var PokemonModel = Backbone.Model.extend({
 
 var PokemonCollection = Backbone.Collection.extend({
   model: PokemonModel,
-  //url: 'http://pokeapi.salestock.net/api/v2/pokemon/',
-  url: 'http://pokeapi.co/api/v2/pokemon/',
+  url: 'http://pokeapi.salestock.net/api/v2/pokemon/',
+  //url: 'http://pokeapi.co/api/v2/pokemon/',
   parse: function(data) {
-    console.log(data);
+    //console.log(data);
     return data.results;
   }
 });
@@ -20,19 +20,25 @@ var PokemonView = Backbone.View.extend({
   template: _.template("<h1><%= name %> - <%= url %></h1>"),
   initialize: function(){
     this.render();
-    //console.log(this.model.toJSON());
   },
   render: function(){
     //this.$el.html(this.template(this.model.toJSON()));
-    this.$el.html(this.template(this.model.attributes));
+    this.$el.html(this.template(this.model.toJSON()));
     return this;
+  },
+  events: {
+    'dblclick': 'destroy'
+  },
+  destroy: function(){
+    this.model.destroy();
   }
 });
 
 var PokemonListView = Backbone.View.extend({
   el: '#pokemon_list',
   initialize: function(){
-    this.render();
+    this.listenTo(this.collection, 'sync', this.render);
+    this.listenTo(this.collection, 'remove', this.whatHappened);
   },
   render: function(){
     this.$el.empty();
@@ -40,13 +46,16 @@ var PokemonListView = Backbone.View.extend({
       var pokemonView = new PokemonView({model:pokemon});
       this.$el.append(pokemonView.render().$el);
     }, this);
+  },
+  whatHappened: function(){
+    console.log(this.collection, 'a pokemon got ejected');
+    this.render();
   }
 });
 
 var pc = new PokemonCollection();
-pc.fetch().then(function(){
-  var myPokemonList = new PokemonListView({collection:pc});
-});
+var myPokemonList = new PokemonListView({collection:pc});
+pc.fetch();
 
 // var TravelTimeModel = Backbone.Model.extend({
 //   defaults:{
